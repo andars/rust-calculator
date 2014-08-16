@@ -11,12 +11,17 @@ pub struct Lexer {
 
 impl Lexer {
 	pub fn new(src: &str) -> Lexer {
-		let l = Lexer {
-			curr: src.char_at(0),
+		let mut l = Lexer {
+			curr: '\0',
 			pos: 0,
 			src: src.to_string(),
 			eof: false
 		};
+		if l.pos >= src.len() {
+			l.eof = true;
+		} else {
+			l.curr = src.char_at(0);
+		}
 		l
 	}
 	pub fn next_token(&mut self) -> token::Token {
@@ -56,6 +61,7 @@ impl Lexer {
 			return;
 		}
 		self.curr = self.src.as_slice().char_at(self.pos);
+		
 	}
 
 	pub fn consume_whitespace(&mut self) {
