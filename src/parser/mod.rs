@@ -66,6 +66,7 @@ impl Parser {
 	pub fn atom(&mut self) -> Box<ast::Node> {
 		
 		match self.peek_token() {
+			token::EOF => {return box ast::Num {num: 0f64} as Box<ast::Node>;}
 			token::LPAREN => {
 				//println!("looking for subexpr");
 				self.expect('(');
