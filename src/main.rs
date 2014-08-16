@@ -3,7 +3,8 @@ use std::io;
 pub mod parser;
 
 fn evaluate(input: &str) -> String {
-    parser::parse(input).eval().to_string()
+    let mut p = parser::Parser::new(input);
+    p.parse().eval().to_string()
 }
 
 pub fn main() {

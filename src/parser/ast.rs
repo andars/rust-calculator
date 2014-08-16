@@ -1,3 +1,4 @@
+#[deriving(Show)]
 pub trait Node {
 	fn eval(&self) -> f64;
 }
@@ -56,3 +57,13 @@ impl Node for Div {
 	}
 }
 
+pub struct Pow {
+	pub base: Box<Node>,
+	pub exponent: Box<Node>
+}
+
+impl Node for Pow {
+	fn eval(&self) -> f64 {
+		self.base.eval().powf(self.exponent.eval())
+	}
+}

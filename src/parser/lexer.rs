@@ -27,7 +27,7 @@ impl Lexer {
 	pub fn next_token(&mut self) -> token::Token {
 		//println!("eof status: {}", self.eof);
 		if self.eof {
-			println!("EOF!!!!!");
+//			println!("EOF!!!!!");
 			return token::EOF;
 		}
 		self.consume_whitespace();
@@ -50,7 +50,8 @@ impl Lexer {
 			'-' => {self.bump(); token::SUB}
 			'*' => {self.bump(); token::MUL}
 			'/' => {self.bump(); token::DIV}
-			_ => { fail!("unexpected token at {}", self.pos); }
+			'^' => {self.bump(); token::CARET}
+			c => { fail!("unexpected token {} at postion {}", c, self.pos); }
 		}
 	}
 	pub fn bump(&mut self) {
