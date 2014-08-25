@@ -2,9 +2,9 @@
 use std::io;
 pub mod parser;
 
-fn evaluate(input: &str) -> String {
+fn evaluate(input: &str) -> f64 {
     let mut p = parser::Parser::new(input);
-    p.parse().eval().to_string()
+    p.parse().eval()
 }
 
 pub fn main() {
@@ -13,7 +13,7 @@ pub fn main() {
         match io::stdin().read_line() {
             Ok(line) => {
                 io::print("=> ");
-                io::println(evaluate(line.as_slice().trim_right()).as_slice());
+                println!("{:f}", evaluate(line.as_slice().trim_right().as_slice()));
             }
             Err(_) => {
                 io::print("\n");
