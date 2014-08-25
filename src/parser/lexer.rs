@@ -39,12 +39,20 @@ impl Lexer {
 				let mut end = start + 1;
 				self.bump();
 				while (char::is_digit(self.curr) || self.curr == '.') && !self.eof{
-					//println!("digit: {}", self.eof);
 					self.bump();
 					end += 1;
 				}
-				//println!("read number: {}", self.src.as_slice().slice(start,end))
 				token::NUMBER(from_str(self.src.as_slice().slice(start,end)).unwrap())
+			}
+			c if char::is_alphabetic(c) => {
+				let start = self.pos;
+				let mut end = start + 1;
+				self.bump();
+				while (char::is_alphabetic(self.curr) && !self.eof) {
+					self.bump();
+					end += 1;
+				}
+				token::SYMBOL(self.src.as_slice().slice(start,end).to_owned())
 			}
 			'+' => {self.bump(); token::ADD}
 			'-' => {self.bump(); token::SUB}

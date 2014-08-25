@@ -1,4 +1,4 @@
-#[deriving(Show, PartialEq)]
+#[deriving(Show, PartialEq, Clone)]
 pub enum Token {
 	LPAREN, 
 	RPAREN,
@@ -8,6 +8,7 @@ pub enum Token {
 	DIV,
 	CARET,
 	NUMBER(f64),
+	SYMBOL(String),
 	EOF
 }
 
@@ -33,6 +34,7 @@ impl Token {
 			CARET => '^',
 			EOF => 'E',
 			NUMBER(_) => 'N',
+			SYMBOL(_) => 'S',
 		}
 	}
 }

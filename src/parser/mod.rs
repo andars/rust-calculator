@@ -21,7 +21,15 @@ impl Parser {
 	}
 
 	pub fn parse(&mut self) -> Box<ast::Node> {
+		if false {
+			self.next_token();
+			while self.current != token::EOF { 
+				println!("{}", self.current);
+				self.next_token();
+			}
+		}
 		self.expr(1)
+	
 	}
 
 	pub fn expr(&mut self, prec: uint) -> Box<ast::Node> {
@@ -31,7 +39,7 @@ impl Parser {
 		loop {
 			let curr = self.peek_token();
 			//println!("{}", curr);
-			if token::is_eof(curr) {
+			if token::is_eof(curr.clone()) {
 				//println!("breaking out of expr loop");
 				break;
 			}
@@ -55,12 +63,7 @@ impl Parser {
 			lhs = self.op(curr, lhs, rhs);
 
 		}
-		//println!("expr ending");
 		return lhs;
-    	//box ast::Add {
-        //	left: box ast::Num { num: 1.0 } as Box<ast::Node>,
-        //	right: box ast::Num { num: 2.0 } as Box<ast::Node>,
-    	//} as Box<ast::Node> 
 	}
 
 	pub fn atom(&mut self) -> Box<ast::Node> {
@@ -68,17 +71,37 @@ impl Parser {
 		match self.peek_token() {
 			token::EOF => {return box ast::Num {num: 0f64} as Box<ast::Node>;}
 			token::LPAREN => {
-				//println!("looking for subexpr");
 				self.expect('(');
 				let e = self.expr(1);
 				self.expect(')');
-				//println!("found subexpr");
 				e
 			}
 			token::NUMBER(val) => {
-				//println!("found number {}", val);
 				self.next_token();
 				box ast::Num { num: val } as Box<ast::Node> 
+			}
+			token::SYMBOL(val) => {
+				//only allow math functions for now, no variables
+				self.next_token();
+				match self.peek_token() {
+					token::LPAREN => {
+						self.expect('(');
+						let e = self.expr(1);
+						self.expect(')');
+						self.function(val,e)
+					}
+					_ => {
+						use std::f64;
+						match val.as_slice() {
+							"PI" | "pi" => {
+								box ast::Num { num: f64::consts::PI } as Box<ast::Node>
+							}
+							_ => {
+								box ast::Num { num: 0f64 } as Box<ast::Node>
+							}
+						}
+					}
+				}
 			}
 			a => {
 				fail!("unrecognized atom: {}", a);
@@ -127,6 +150,24 @@ impl Parser {
 			}
 		}
 	}
+	
+	pub fn function(&self, op: String, arg: Box<ast::Node>) -> Box<ast::Node> {
+		match op.as_slice() {
+			"sin" | "sine" => {
+				box ast::Sin {
+					arg: arg
+				} as Box<ast::Node>
+			}
+			"sqrt" | "SQRT" => {
+				box ast::Sqrt {
+					arg: arg
+				} as Box<ast::Node>
+			}
+			_ => {
+				box ast::Num {num: 0f64} as Box<ast::Node>
+			}
+		}
+	}
 }
 
 impl Parser {
@@ -140,12 +181,12 @@ impl Parser {
 		if self.peeked.is_none() {
 			self.peeked = Some(self.lexer.next_token());
 		}
-		return self.peeked.unwrap();
+		self.peeked.clone().unwrap()
 	}
 	pub fn next_token(&mut self) {
 		match self.peeked {
-			Some(pk) => {
-				self.current = pk;
+			Some(ref mut pk) => {
+				self.current = pk.clone();
 			}
 			None => {
 				self.current = self.lexer.next_token();

@@ -67,3 +67,21 @@ impl Node for Pow {
 		self.base.eval().powf(self.exponent.eval())
 	}
 }
+
+pub struct Sin {
+	pub arg: Box<Node>
+}
+
+impl Node for Sin {
+	fn eval(&self) -> f64 {
+		self.arg.eval().sin()
+	}
+}
+pub struct Sqrt {
+	pub arg: Box<Node>
+}
+impl Node for Sqrt {
+	fn eval(&self) -> f64 {
+		self.arg.eval().sqrt()
+	}
+}
