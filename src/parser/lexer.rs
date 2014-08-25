@@ -48,11 +48,11 @@ impl Lexer {
 				let start = self.pos;
 				let mut end = start + 1;
 				self.bump();
-				while (char::is_alphabetic(self.curr) && !self.eof) {
+				while char::is_alphabetic(self.curr) && !self.eof {
 					self.bump();
 					end += 1;
 				}
-				token::SYMBOL(self.src.as_slice().slice(start,end).to_owned())
+				token::SYMBOL(self.src.as_slice().slice(start,end).to_string())
 			}
 			'+' => {self.bump(); token::ADD}
 			'-' => {self.bump(); token::SUB}
