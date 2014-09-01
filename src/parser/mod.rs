@@ -163,6 +163,11 @@ impl Parser {
 					arg: arg
 				} as Box<ast::Node>
 			}
+			"print" => {
+				box ast::Print {
+					arg: arg
+				} as Box<ast::Node>
+			}
 			_ => {
 				box ast::Num {num: 0f64} as Box<ast::Node>
 			}
