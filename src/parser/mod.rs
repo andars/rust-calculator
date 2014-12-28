@@ -163,6 +163,11 @@ impl Parser {
 					arg: arg
 				} as Box<ast::Node>
 			}
+            "cos" | "cosine" => {
+                box ast::Cos {
+                    arg: arg
+                } as Box<ast::Node>
+            }
 			_ => {
 				box ast::Num {num: 0f64} as Box<ast::Node>
 			}

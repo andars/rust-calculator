@@ -77,6 +77,16 @@ impl Node for Sin {
 		self.arg.eval().sin()
 	}
 }
+pub struct Cos {
+    pub arg: Box<Node>
+}
+
+impl Node for Cos {
+    fn eval(&self) -> f64 {
+        self.arg.eval().cos()
+    }
+}
+
 pub struct Sqrt {
 	pub arg: Box<Node>
 }
