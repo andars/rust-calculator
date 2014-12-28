@@ -12,8 +12,7 @@ pub fn main() {
         io::print(">> ");
         match io::stdin().read_line() {
             Ok(line) => {
-                io::print("=> ");
-                println!("{:f}", evaluate(line.as_slice().trim_right().as_slice()));
+                println!("=> {:f}", evaluate(line.as_slice().trim_right().as_slice()));
             }
             Err(_) => {
                 io::print("\n");

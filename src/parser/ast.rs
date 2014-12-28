@@ -95,3 +95,15 @@ impl Node for Sqrt {
 		self.arg.eval().sqrt()
 	}
 }
+
+pub struct Print {
+	pub arg: Box<Node>
+}
+
+impl Node for Print {
+	fn eval(&self) -> f64 {
+		let res = self.arg.eval();
+		println!("{}",res);
+		res
+	}
+}
