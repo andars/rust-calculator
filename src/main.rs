@@ -1,5 +1,8 @@
+#![feature(box_syntax)]
+#![feature(old_io)]
+#![feature(collections)]
 
-use std::io;
+use std::old_io;
 pub mod parser;
 
 fn evaluate(input: &str) -> f64 {
@@ -9,13 +12,13 @@ fn evaluate(input: &str) -> f64 {
 
 pub fn main() {
     loop {
-        io::print(">> ");
-        match io::stdin().read_line() {
+        old_io::print(">> ");
+        match old_io::stdin().read_line() {
             Ok(line) => {
-                println!("=> {:f}", evaluate(line.as_slice().trim_right().as_slice()));
+                println!("=> {}", evaluate(line.as_slice().trim_right().as_slice()));
             }
             Err(_) => {
-                io::print("\n");
+                old_io::print("\n");
                 break;
             }
         }
