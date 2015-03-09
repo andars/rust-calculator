@@ -100,7 +100,7 @@ impl Parser {
                                 box ast::Num { num: f64::consts::PI } as Box<ast::Node>
                             }
                             _ => {
-                                box ast::Num { num: 0f64 } as Box<ast::Node>
+                                box ast::Var { name: val } as Box<ast::Node>
                             }
                         }
                     }

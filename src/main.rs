@@ -3,11 +3,14 @@
 #![feature(collections)]
 
 use std::old_io;
+use std::collections::HashMap;
 pub mod parser;
 
 fn evaluate(input: &str) -> f64 {
     let mut p = parser::Parser::new(input);
-    p.parse().eval()
+    let mut env = HashMap::new();
+    env.insert("wow", 35.0f64);
+    p.parse().eval(&mut env)
 }
 
 pub fn main() {
