@@ -91,17 +91,22 @@ impl Parser {
                         self.expect(')');
                         self.function(val,e)
                     }
-                    _ => {
-                        use std::f64;
+                    SYMBOL(name) => {
                         match &val[..] {
-                            "PI" => {
-                                box ast::Num { num: f64::consts::PI } as Box<ast::Node>
+                            "let" => {
+                                self.next_token();
+                                self.expect('=');
+                                let expr = self.expr(1);
+                                box ast::Assignment { name: name, value: expr} as Box<ast::Node>
                             }
                             _ => {
-                                box ast::Var { name: val } as Box<ast::Node>
+                                panic!("Error: two consecutive symbols")
                             }
                         }
-                    }
+                   }
+                   _ => {
+                       box ast::Var { name: val } as Box<ast::Node>
+                   }
                 }
             }
             a => {

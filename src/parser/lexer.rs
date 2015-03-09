@@ -59,6 +59,7 @@ impl Lexer {
             '*' => {self.bump(); MUL}
             '/' => {self.bump(); DIV}
             '^' => {self.bump(); CARET}
+            '=' => {self.bump(); EQUALS}
             c => { panic!("unexpected token {} at postion {}", c, self.pos); }
         }
     }

@@ -10,6 +10,7 @@ pub enum Token {
     MUL,
     DIV,
     CARET,
+    EQUALS,
     NUMBER(f64),
     SYMBOL(String),
     EOF
@@ -35,6 +36,7 @@ impl Token {
             MUL => '*',
             DIV => '/',
             CARET => '^',
+            EQUALS => '=',
             EOF => 'E',
             NUMBER(_) => 'N',
             SYMBOL(_) => 'S',
