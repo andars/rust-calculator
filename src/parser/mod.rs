@@ -96,7 +96,7 @@ impl Parser {
                     _ => {
                         use std::f64;
                         match &val[..] {
-                            "PI" | "pi" => {
+                            "PI" => {
                                 box ast::Num { num: f64::consts::PI } as Box<ast::Node>
                             }
                             _ => {
