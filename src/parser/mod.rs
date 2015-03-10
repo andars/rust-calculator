@@ -19,20 +19,18 @@ impl Parser {
             peeked: None,
             lexer: l
         };
-//        p.next_token();
         p
     }
 
     pub fn parse(&mut self) -> Box<ast::Node> {
-        if false {
+        /*
+        self.next_token();
+        while self.current != EOF { 
+            println!("{:?}", self.current);
             self.next_token();
-            while self.current != EOF { 
-                println!("{:?}", self.current);
-                self.next_token();
-            }
         }
+        */
         self.expr(1)
-    
     }
 
     pub fn expr(&mut self, prec: usize) -> Box<ast::Node> {
@@ -42,7 +40,7 @@ impl Parser {
         loop {
             let curr = self.peek_token();
             //println!("{:?}", curr);
-            if token::is_eof(curr.clone()) {
+            if token::is_eof(&curr) {
                 //println!("breaking out of expr loop");
                 break;
             }

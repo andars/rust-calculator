@@ -42,9 +42,9 @@ impl Token {
     }
 }
 
-pub fn is_eof(t: Token) -> bool{
+pub fn is_eof(t: &Token) -> bool{
     match t {
-        EOF => true,
+        &EOF => true,
         _ => false
     }
 }

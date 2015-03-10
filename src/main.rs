@@ -20,7 +20,7 @@ pub fn main() {
         old_io::print(">> ");
         match old_io::stdin().read_line() {
             Ok(line) => {
-                println!("=> {}", evaluate(line.as_slice().trim_right().as_slice()));
+                println!("=> {}", evaluate(&line.trim_right()));
             }
             Err(_) => {
                 old_io::print("\n");
