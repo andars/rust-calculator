@@ -1,8 +1,7 @@
 #![feature(box_syntax)]
-#![feature(old_io)]
-#![feature(collections)]
 
-use std::old_io;
+use std::io;
+use std::io::prelude::*;
 use std::collections::HashMap;
 pub mod parser;
 
@@ -14,16 +13,25 @@ fn evaluate(input: &str, env: &mut HashMap<String, f64>) -> f64 {
 pub fn main() {
     use std::f64;
     let mut env = HashMap::new();
-    env.insert(String::from_str("wow"), 35.0f64);
-    env.insert(String::from_str("pi"), f64::consts::PI);
+    env.insert("wow".to_string(), 35.0f64);
+    env.insert("pi".to_string(), f64::consts::PI);
+
+    let mut stdin = io::stdin();
+
+
     loop {
-        old_io::print(">> ");
-        match old_io::stdin().read_line() {
-            Ok(line) => {
-                println!("=> {}", evaluate(&line.trim_right(), &mut env));
+        print!(">> ");
+        io::stdout().flush().ok();
+
+        let mut input = String::new();
+        
+        match stdin.read_line(&mut input) {
+            Ok(_) => {
+                println!("=> {}", evaluate(&input.trim_right(), &mut env));
+                io::stdout().flush().ok();
             }
             Err(_) => {
-                old_io::print("\n");
+                println!("");
                 break;
             }
         }

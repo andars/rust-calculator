@@ -20,7 +20,7 @@ impl Lexer {
         if l.pos >= src.len() {
             l.eof = true;
         } else {
-            l.curr = src.char_at(0);
+            l.curr = src.chars().nth(0).unwrap();
         }
         l
     }
@@ -70,7 +70,7 @@ impl Lexer {
             self.eof = true;
             return;
         }
-        self.curr = self.src.char_at(self.pos);
+        self.curr = self.src.chars().nth(self.pos).unwrap();
         
     }
 

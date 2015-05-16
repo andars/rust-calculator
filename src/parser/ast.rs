@@ -1,6 +1,6 @@
 extern crate std;
-use std::num::Float;
 use std::collections::HashMap;
+use std::f64;
 
 pub trait Node {
     fn eval(&self, env: &mut HashMap<String, f64>) -> f64;
@@ -67,7 +67,7 @@ pub struct Pow {
 
 impl Node for Pow {
     fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        std::num::Float::powf(self.base.eval(env), self.exponent.eval(env))
+        f64::powf(self.base.eval(env), self.exponent.eval(env))
     }
 }
 
