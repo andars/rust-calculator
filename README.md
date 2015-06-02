@@ -4,3 +4,8 @@
 
 
 ![alt tag](out.gif)
+
+
+###License
+
+MIT. See [LICENSE](LICENSE)
