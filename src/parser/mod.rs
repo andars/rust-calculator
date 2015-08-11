@@ -70,7 +70,7 @@ impl Parser {
     pub fn atom(&mut self) -> Box<ast::Node> {
         
         match self.peek_token() {
-            EOF => {return box ast::Num {num: 0f64} as Box<ast::Node>;}
+            EOF => {return Box::new( ast::Num {num: 0f64});}
             LPAREN => {
                 self.expect('(');
                 let e = self.expr(1);
@@ -79,7 +79,7 @@ impl Parser {
             }
             NUMBER(val) => {
                 self.next_token();
-                box ast::Num { num: val } as Box<ast::Node> 
+                Box::new( ast::Num { num: val }) 
             }
             SYMBOL(val) => {
                 //only allow math functions for now, no variables
@@ -97,7 +97,7 @@ impl Parser {
                                 self.next_token();
                                 self.expect('=');
                                 let expr = self.expr(1);
-                                box ast::Assignment { name: name, value: expr} as Box<ast::Node>
+                                Box::new( ast::Assignment { name: name, value: expr}) 
                             }
                             _ => {
                                 panic!("Error: two consecutive symbols")
@@ -105,7 +105,7 @@ impl Parser {
                         }
                    }
                    _ => {
-                       box ast::Var { name: val } as Box<ast::Node>
+                       Box::new( ast::Var { name: val }) 
                    }
                 }
             }
@@ -119,35 +119,34 @@ impl Parser {
             -> Box<ast::Node> {
         match op {
             ADD => {
-                box ast::Add {
+                Box::new( ast::Add {
                     left: lhs,
                     right: rhs
-                } as Box<ast::Node> 
+                }) 
             }
             SUB => {
-                box ast::Sub {
+                Box::new( ast::Sub {
                     left: lhs, 
                     right: rhs
-                } as Box<ast::Node>
-
+                }) 
             }
             MUL => {
-                box ast::Mul {
+                Box::new( ast::Mul {
                     left: lhs, 
                     right: rhs
-                } as Box<ast::Node>
+                }) 
             }
             DIV => {
-                box ast::Div {
+                Box::new( ast::Div {
                     left: lhs, 
                     right: rhs
-                } as Box<ast::Node>
+                }) 
             }
             CARET => {
-                box ast::Pow {
+                Box::new( ast::Pow {
                     base: lhs,
                     exponent: rhs
-                } as Box<ast::Node>
+                })
             }
             o => {
                 panic!("unrecognized op: {:?}", o);
@@ -158,24 +157,24 @@ impl Parser {
     pub fn function<'a>(&'a self, op: String, arg: Box<ast::Node>) -> Box<ast::Node> {
         match &op[..] {
             "sin" | "sine" => {
-                box ast::Sin {
+                Box::new( ast::Sin {
                     arg: arg
-                } as Box<ast::Node>
+                }) 
             }
             "sqrt" | "SQRT" => {
-                box ast::Sqrt {
+                Box::new( ast::Sqrt {
                     arg: arg
-                } as Box<ast::Node>
+                }) 
             }
             "cos" | "cosine" => {
-                box ast::Cos {
+                Box::new( ast::Cos {
                     arg: arg
-                } as Box<ast::Node>
+                }) 
             }
             "print" => {
-                box ast::Print {
+                Box::new( ast::Print {
                     arg: arg
-                } as Box<ast::Node>
+                }) 
             }
             _ => {
                 panic!("unrecognized function!");
