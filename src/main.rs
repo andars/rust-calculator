@@ -26,7 +26,7 @@ pub fn main() {
         io::stdout().flush().ok();
 
         let mut input = String::new();
-        
+
         match stdin.read_line(&mut input) {
             Ok(_) => {
 

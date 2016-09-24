@@ -3,7 +3,7 @@ use self::Token::*;
 
 #[derive(Debug,PartialEq, Clone)]
 pub enum Token {
-    LPAREN, 
+    LPAREN,
     RPAREN,
     ADD,
     SUB,
@@ -26,7 +26,7 @@ impl Token {
             _ => { None}
         }
     }
-    
+
     pub fn to_char(&self) -> char {
         match *self {
             LPAREN => '(',

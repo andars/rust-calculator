@@ -68,7 +68,6 @@ impl Lexer {
             return;
         }
         self.curr = self.src.chars().nth(self.pos).unwrap();
-        
     }
 
     pub fn consume_whitespace(&mut self) {
@@ -81,7 +80,7 @@ pub fn is_whitespace(c: char) -> bool {
     match c {
         ' ' | '\n' | '\t' => true,
         _ => false
-    }    
+    }
 }
 
 

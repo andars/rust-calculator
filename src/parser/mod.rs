@@ -28,7 +28,6 @@ impl Parser {
 
     pub fn expr(&mut self, prec: usize) -> Result<Box<ast::Node>, String> {
         let mut lhs = try!(self.atom());
-        //println!("expr {:?}", self.current);        
         let mut rhs;
         loop {
             let curr = try!(self.peek_token());
@@ -51,7 +50,7 @@ impl Parser {
                     rhs = try!(self.expr(op_prec + 1));
                 }
                 _  => {
-                    rhs = try!(self.expr(op_prec)); 
+                    rhs = try!(self.expr(op_prec));
                 }
             }
             lhs = self.op(curr, lhs, rhs);
@@ -61,7 +60,7 @@ impl Parser {
     }
 
     pub fn atom(&mut self) -> Result<Box<ast::Node>, String> {
-        
+
         match try!(self.peek_token()) {
             EOF => { Ok(Box::new( ast::Num {num: 0f64})) }
             LPAREN => {
@@ -115,25 +114,25 @@ impl Parser {
                 Box::new( ast::Add {
                     left: lhs,
                     right: rhs
-                }) 
+                })
             }
             SUB => {
                 Box::new( ast::Sub {
-                    left: lhs, 
+                    left: lhs,
                     right: rhs
-                }) 
+                })
             }
             MUL => {
                 Box::new( ast::Mul {
-                    left: lhs, 
+                    left: lhs,
                     right: rhs
-                }) 
+                })
             }
             DIV => {
                 Box::new( ast::Div {
-                    left: lhs, 
+                    left: lhs,
                     right: rhs
-                }) 
+                })
             }
             CARET => {
                 Box::new( ast::Pow {
@@ -146,28 +145,28 @@ impl Parser {
             }
         }
     }
-    
+
     pub fn function<'a>(&'a self, op: String, arg: Box<ast::Node>) -> Box<ast::Node> {
         match &op[..] {
             "sin" | "sine" => {
                 Box::new( ast::Sin {
                     arg: arg
-                }) 
+                })
             }
             "sqrt" | "SQRT" => {
                 Box::new( ast::Sqrt {
                     arg: arg
-                }) 
+                })
             }
             "cos" | "cosine" => {
                 Box::new( ast::Cos {
                     arg: arg
-                }) 
+                })
             }
             "print" => {
                 Box::new( ast::Print {
                     arg: arg
-                }) 
+                })
             }
             _ => {
                 panic!("unrecognized function!");
