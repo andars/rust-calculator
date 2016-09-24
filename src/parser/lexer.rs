@@ -24,14 +24,14 @@ impl Lexer {
         }
         l
     }
-    pub fn next_token(&mut self) -> token::Token {
+    pub fn next_token(&mut self) -> Result<token::Token, String> {
         if self.eof {
-            return EOF;
+            return Ok(EOF);
         }
         self.consume_whitespace();
         match self.curr {
-            '(' => {self.bump(); LPAREN}
-            ')' => {self.bump(); RPAREN}
+            '(' => {self.bump(); Ok(LPAREN)}
+            ')' => {self.bump(); Ok(RPAREN)}
             c if c.is_digit(10) => {
                 let start = self.pos;
                 let mut end = start + 1;
@@ -40,7 +40,7 @@ impl Lexer {
                     self.bump();
                     end += 1;
                 }
-                NUMBER(self.src[start..end].parse::<f64>().unwrap())
+                Ok(NUMBER(self.src[start..end].parse::<f64>().unwrap()))
             }
             c if c.is_alphabetic() => {
                 let start = self.pos;
@@ -50,15 +50,15 @@ impl Lexer {
                     self.bump();
                     end += 1;
                 }
-                SYMBOL(self.src[start..end].to_string())
+                Ok(SYMBOL(self.src[start..end].to_string()))
             }
-            '+' => {self.bump(); ADD}
-            '-' => {self.bump(); SUB}
-            '*' => {self.bump(); MUL}
-            '/' => {self.bump(); DIV}
-            '^' => {self.bump(); CARET}
-            '=' => {self.bump(); EQUALS}
-            c => { panic!("unexpected token {} at position {}", c, self.pos); }
+            '+' => {self.bump(); Ok(ADD)}
+            '-' => {self.bump(); Ok(SUB)}
+            '*' => {self.bump(); Ok(MUL)}
+            '/' => {self.bump(); Ok(DIV)}
+            '^' => {self.bump(); Ok(CARET)}
+            '=' => {self.bump(); Ok(EQUALS)}
+            c => { Err(format!("unexpected token {} at position {}", c, self.pos)) }
         }
     }
     pub fn bump(&mut self) {

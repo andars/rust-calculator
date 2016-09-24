@@ -22,23 +22,16 @@ impl Parser {
         p
     }
 
-    pub fn parse(&mut self) -> Box<ast::Node> {
-        /*
-        self.next_token();
-        while self.current != EOF { 
-            println!("{:?}", self.current);
-            self.next_token();
-        }
-        */
+    pub fn parse(&mut self) -> Result<Box<ast::Node>, String> {
         self.expr(1)
     }
 
-    pub fn expr(&mut self, prec: usize) -> Box<ast::Node> {
-        let mut lhs = self.atom();
+    pub fn expr(&mut self, prec: usize) -> Result<Box<ast::Node>, String> {
+        let mut lhs = try!(self.atom());
         //println!("expr {:?}", self.current);        
         let mut rhs;
         loop {
-            let curr = self.peek_token();
+            let curr = try!(self.peek_token());
             //println!("{:?}", curr);
             if token::is_eof(&curr) {
                 //println!("breaking out of expr loop");
@@ -52,65 +45,65 @@ impl Parser {
             if op_prec < prec {
                 break;
             }
-            self.next_token();
+            try!(self.next_token());
             match op_assoc {
                 0 => {
-                    rhs = self.expr(op_prec + 1);
+                    rhs = try!(self.expr(op_prec + 1));
                 }
                 _  => {
-                    rhs = self.expr(op_prec)        
+                    rhs = try!(self.expr(op_prec)); 
                 }
             }
             lhs = self.op(curr, lhs, rhs);
 
         }
-        return lhs;
+        Ok(lhs)
     }
 
-    pub fn atom(&mut self) -> Box<ast::Node> {
+    pub fn atom(&mut self) -> Result<Box<ast::Node>, String> {
         
-        match self.peek_token() {
-            EOF => {return Box::new( ast::Num {num: 0f64});}
+        match try!(self.peek_token()) {
+            EOF => { Ok(Box::new( ast::Num {num: 0f64})) }
             LPAREN => {
                 self.expect('(');
-                let e = self.expr(1);
+                let e = try!(self.expr(1));
                 self.expect(')');
-                e
+                Ok(e)
             }
             NUMBER(val) => {
-                self.next_token();
-                Box::new( ast::Num { num: val }) 
+                try!(self.next_token());
+                Ok(Box::new( ast::Num { num: val }))
             }
             SYMBOL(val) => {
                 //only allow math functions for now, no variables
-                self.next_token();
-                match self.peek_token() {
+                try!(self.next_token());
+                match try!(self.peek_token()) {
                     LPAREN => {
                         self.expect('(');
-                        let e = self.expr(1);
+                        let e = try!(self.expr(1));
                         self.expect(')');
-                        self.function(val,e)
+                        Ok(self.function(val,e))
                     }
                     SYMBOL(name) => {
                         match &val[..] {
                             "let" => {
-                                self.next_token();
+                                try!(self.next_token());
                                 self.expect('=');
-                                let expr = self.expr(1);
-                                Box::new( ast::Assignment { name: name, value: expr}) 
+                                let expr = try!(self.expr(1));
+                                Ok(Box::new( ast::Assignment { name: name, value: expr}))
                             }
                             _ => {
-                                panic!("Error: two consecutive symbols")
+                                Err("Error: two consecutive symbols".to_string())
                             }
                         }
                    }
                    _ => {
-                       Box::new( ast::Var { name: val }) 
+                       Ok(Box::new( ast::Var { name: val }))
                    }
                 }
             }
             a => {
-                panic!("unrecognized atom: {:?}", a);
+                Err(format!("unrecognized atom: {:?}", a))
             }
         }
     }
@@ -190,21 +183,22 @@ impl Parser {
             panic!("expected {:?} but found {}", tok, self.current.to_char());
         }
     }
-    pub fn peek_token(&mut self) -> token::Token{
+    pub fn peek_token(&mut self) -> Result<token::Token, String> {
         if self.peeked.is_none() {
-            self.peeked = Some(self.lexer.next_token());
+            self.peeked = Some(try!(self.lexer.next_token()));
         }
-        self.peeked.clone().unwrap()
+        Ok(self.peeked.clone().unwrap())
     }
-    pub fn next_token(&mut self) {
+    pub fn next_token(&mut self) -> Result<(), String> {
         match self.peeked {
             Some(ref mut pk) => {
                 self.current = pk.clone();
             }
             None => {
-                self.current = self.lexer.next_token();
+                self.current = try!(self.lexer.next_token());
             }
         }
         self.peeked = None;
+        Ok(())
     }
 }

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::f64;
 
 pub trait Node {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64;
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64>;
 }
 
 pub struct Num {
@@ -11,8 +11,8 @@ pub struct Num {
 }
 
 impl Node for Num {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        self.num
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+        Some(self.num)
     }
 }
 
@@ -22,8 +22,16 @@ pub struct Add {
 }
 
 impl Node for Add {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        self.left.eval(env) + self.right.eval(env)
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+        match self.left.eval(env) {
+            Some(l) => {
+                match self.right.eval(env) {
+                    Some(r) => Some(l + r),
+                    None => None
+                }
+            }
+            None => None
+        }
     }
 }
 
@@ -33,8 +41,16 @@ pub struct Sub {
 }
 
 impl Node for Sub {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        self.left.eval(env) - self.right.eval(env)
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+        match self.left.eval(env) {
+            Some(l) => {
+                match self.right.eval(env) {
+                    Some(r) => Some(l - r),
+                    None => None
+                }
+            }
+            None => None
+        }
     }
 }
 
@@ -44,8 +60,16 @@ pub struct Mul {
 }
 
 impl Node for Mul {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        self.left.eval(env) * self.right.eval(env)
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+        match self.left.eval(env) {
+            Some(l) => {
+                match self.right.eval(env) {
+                    Some(r) => Some(l*r),
+                    None => None
+                }
+            }
+            None => None
+        }
     }
 }
 
@@ -55,8 +79,16 @@ pub struct Div {
 }
 
 impl Node for Div {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        self.left.eval(env) / self.right.eval(env)
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+        match self.left.eval(env) {
+            Some(l) => {
+                match self.right.eval(env) {
+                    Some(r) => Some(l/r),
+                    None => None
+                }
+            }
+            None => None
+        }
     }
 }
 
@@ -66,8 +98,16 @@ pub struct Pow {
 }
 
 impl Node for Pow {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        f64::powf(self.base.eval(env), self.exponent.eval(env))
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+        match self.base.eval(env) {
+            Some(b) => {
+                match self.exponent.eval(env) {
+                    Some(e) => Some(b.powf(e)),
+                    None => None
+                }
+            }
+            None => None
+        }
     }
 }
 
@@ -76,8 +116,11 @@ pub struct Sin {
 }
 
 impl Node for Sin {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        self.arg.eval(env).sin()
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+        match self.arg.eval(env) {
+            Some(x) => Some(x.sin()),
+            None => None
+        }
     }
 }
 pub struct Cos {
@@ -85,8 +128,11 @@ pub struct Cos {
 }
 
 impl Node for Cos {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        self.arg.eval(env).cos()
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+        match self.arg.eval(env) {
+            Some(x) => Some(x.cos()),
+            None => None
+        }
     }
 }
 
@@ -94,8 +140,11 @@ pub struct Sqrt {
     pub arg: Box<Node>
 }
 impl Node for Sqrt {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        self.arg.eval(env).sqrt()
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+        match self.arg.eval(env) {
+            Some(x) => Some(x.sqrt()),
+            None => None
+        }
     }
 }
 
@@ -104,9 +153,12 @@ pub struct Print {
 }
 
 impl Node for Print {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
         let res = self.arg.eval(env);
-        println!("{}",res);
+        match res {
+            Some(x) => println!("{}", x),
+            None => {}
+        }
         res
     }
 }
@@ -116,8 +168,11 @@ pub struct Var {
 }
 
 impl Node for Var {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
-        return *env.get(&(self.name)[..]).unwrap();        
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+        match env.get(&(self.name)[..]) {
+            Some(r) => Some(*r),
+            None => None
+        }
     }
 }
 
@@ -127,9 +182,12 @@ pub struct Assignment {
 }
 
 impl Node for Assignment {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> f64 {
+    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
         let val = self.value.eval(env);
-        env.insert(self.name.clone(), val);
+        match val {
+            Some(x) => { env.insert(self.name.clone(), x); }
+            None => {}
+        }
         val
     }
 }

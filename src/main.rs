@@ -3,9 +3,13 @@ use std::io::prelude::*;
 use std::collections::HashMap;
 pub mod parser;
 
-fn evaluate(input: &str, env: &mut HashMap<String, f64>) -> f64 {
+fn evaluate(input: &str, env: &mut HashMap<String, f64>) -> Result<f64, String> {
     let mut p = parser::Parser::new(input);
-    p.parse().eval(env)
+    let ast = try!(p.parse());
+    match ast.eval(env) {
+        Some(result) => Ok(result),
+        None => Err("No value for that expression!".to_string())
+    }
 }
 
 pub fn main() {
@@ -25,7 +29,15 @@ pub fn main() {
         
         match stdin.read_line(&mut input) {
             Ok(_) => {
-                println!("=> {}", evaluate(&input.trim_right(), &mut env));
+                let result = evaluate(&input.trim_right(), &mut env);
+                match result {
+                    Ok(value) => {
+                        println!("=> {}", value);
+                    }
+                    Err(s) => {
+                        println!("Error: {}", s);
+                    }
+                }
                 io::stdout().flush().ok();
             }
             Err(_) => {
