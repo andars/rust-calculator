@@ -29,7 +29,15 @@ pub fn main() {
         
         match stdin.read_line(&mut input) {
             Ok(_) => {
-                let result = evaluate(&input.trim_right(), &mut env);
+
+                if input.len() == 0 {
+                    println!("");
+                    return;
+                }
+
+                let expression_text = input.trim_right();
+
+                let result = evaluate(expression_text, &mut env);
                 match result {
                     Ok(value) => {
                         println!("=> {}", value);
@@ -42,7 +50,7 @@ pub fn main() {
             }
             Err(_) => {
                 println!("");
-                break;
+                return;
             }
         }
     }
