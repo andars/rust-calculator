@@ -65,9 +65,9 @@ impl Parser {
         match try!(self.peek_token()) {
             EOF => { Ok(Box::new( ast::Num {num: 0f64})) }
             LPAREN => {
-                self.expect('(');
+                try!(self.expect('('));
                 let e = try!(self.expr(1));
-                self.expect(')');
+                try!(self.expect(')'));
                 Ok(e)
             }
             NUMBER(val) => {
@@ -79,16 +79,16 @@ impl Parser {
                 try!(self.next_token());
                 match try!(self.peek_token()) {
                     LPAREN => {
-                        self.expect('(');
+                        try!(self.expect('('));
                         let e = try!(self.expr(1));
-                        self.expect(')');
+                        try!(self.expect(')'));
                         Ok(self.function(val,e))
                     }
                     SYMBOL(name) => {
                         match &val[..] {
                             "let" => {
                                 try!(self.next_token());
-                                self.expect('=');
+                                try!(self.expect('='));
                                 let expr = try!(self.expr(1));
                                 Ok(Box::new( ast::Assignment { name: name, value: expr}))
                             }
@@ -177,11 +177,12 @@ impl Parser {
 }
 
 impl Parser {
-    pub fn expect(&mut self, tok: char) {
-        self.next_token();
+    pub fn expect(&mut self, tok: char) -> Result<(), String> {
+        try!(self.next_token());
         if self.current.to_char() != tok {
-            panic!("expected {:?} but found {}", tok, self.current.to_char());
+            return Err(format!("expected {:?} but found {}", tok, self.current.to_char()));
         }
+        Ok(())
     }
     pub fn peek_token(&mut self) -> Result<token::Token, String> {
         if self.peeked.is_none() {
