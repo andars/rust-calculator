@@ -11,7 +11,7 @@ pub struct Num {
 }
 
 impl Node for Num {
-    fn eval(&self, env: &mut HashMap<String, f64>) -> Option<f64> {
+    fn eval(&self, _env: &mut HashMap<String, f64>) -> Option<f64> {
         Some(self.num)
     }
 }
