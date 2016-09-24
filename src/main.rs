@@ -14,7 +14,7 @@ pub fn main() {
     env.insert("wow".to_string(), 35.0f64);
     env.insert("pi".to_string(), f64::consts::PI);
 
-    let mut stdin = io::stdin();
+    let stdin = io::stdin();
 
 
     loop {
